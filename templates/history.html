@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ComicCraft - My Comics</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f6fb;
+
+            color: #222;
+
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            background: #111827;
+
+            color: white;
+
+            padding: 20px 30px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 2px 10px
+                rgba(0,0,0,0.15);
+
+        }
+
+
+        header h1 {
+
+            font-size: 25px;
+
+        }
+
+
+        .buttons {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        button {
+
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+        }
+
+
+        button:hover {
+
+            opacity: 0.9;
+
+        }
+
+
+        .home-btn {
+
+            background: #374151;
+
+            color: white;
+
+        }
+
+
+        .clear-btn {
+
+            background: #dc2626;
+
+            color: white;
+
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+
+            width: 90%;
+
+            max-width: 900px;
+
+            margin: 35px auto;
+
+        }
+
+
+        /* =========================
+           EMPTY HISTORY
+        ========================= */
+
+        .empty {
+
+            background: white;
+
+            padding: 60px 20px;
+
+            border-radius: 14px;
+
+            text-align: center;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+
+        }
+
+
+        .empty h2 {
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .empty p {
+
+            color: #666;
+
+        }
+
+
+        /* =========================
+           COMIC CARD
+        ========================= */
+
+        .comic-card {
+
+            background: white;
+
+            padding: 22px;
+
+            margin-bottom: 18px;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+
+        }
+
+
+        .comic-card h2 {
+
+            margin-bottom: 10px;
+
+            font-size: 22px;
+
+        }
+
+
+        .genre {
+
+            display: inline-block;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            padding: 6px 11px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .date {
+
+            color: #777;
+
+            font-size: 13px;
+
+            margin-bottom: 16px;
+
+        }
+
+
+        .card-buttons {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .open-btn {
+
+            background: #6366f1;
+
+            color: white;
+
+        }
+
+
+        .delete-btn {
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            header {
+
+                padding: 15px;
+
+                align-items: flex-start;
+
+                gap: 15px;
+
+                flex-direction: column;
+
+            }
+
+
+            header h1 {
+
+                font-size: 21px;
+
+            }
+
+
+            .container {
+
+                width: 94%;
+
+                margin-top: 25px;
+
+            }
+
+
+            .comic-card {
+
+                padding: 18px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <h1>
+        📚 My Comics
+    </h1>
+
+
+    <div class="buttons">
+
+        <button
+            class="home-btn"
+            onclick="goHome()">
+
+            🏠 Create New Comic
+
+        </button>
+
+
+        <button
+            class="clear-btn"
+            onclick="clearHistory()">
+
+            🗑️ Clear History
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="container">
+
+    <div id="historyContainer"></div>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   LOAD HISTORY
+========================= */
+
+function loadHistory() {
+
+    const container =
+        document.getElementById(
+            "historyContainer"
+        );
+
+
+    let history = [];
+
+
+    try {
+
+        history =
+            JSON.parse(
+                localStorage.getItem(
+                    "comicCraftHistory"
+                )
+            ) || [];
+
+    }
+
+    catch (error) {
+
+        history = [];
+
+    }
+
+
+    /* =========================
+       NO SAVED COMICS
+    ========================= */
+
+    if (history.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <h2>
+                    📭 No Saved Comics
+                </h2>
+
+                <p>
+                    Your saved comic stories
+                    will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =========================
+       DISPLAY COMICS
+    ========================= */
+
+    container.innerHTML = "";
+
+
+    history.forEach(
+        function(item) {
+
+            const comic =
+                item.comic;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "comic-card";
+
+
+            card.innerHTML = `
+
+                <h2>
+                    ${safe(
+                        comic.title ||
+                        "Untitled Comic"
+                    )}
+                </h2>
+
+
+                <div class="genre">
+
+                    ${safe(
+                        comic.genre ||
+                        "Unknown Genre"
+                    )}
+
+                </div>
+
+
+                <div class="date">
+
+                    💾 Saved:
+                    ${safe(
+                        item.savedAt ||
+                        "Unknown"
+                    )}
+
+                </div>
+
+
+                <div class="card-buttons">
+
+                    <button
+                        class="open-btn"
+                        onclick="openComic(${item.id})">
+
+                        📖 Open Comic
+
+                    </button>
+
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteComic(${item.id})">
+
+                        🗑️ Delete
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================
+   OPEN COMIC
+========================= */
+
+function openComic(id) {
+
+    let history = [];
+
+
+    try {
+
+        history =
+            JSON.parse(
+                localStorage.getItem(
+                    "comicCraftHistory"
+                )
+            ) || [];
+
+    }
+
+    catch (error) {
+
+        history = [];
+
+    }
+
+
+    const selected =
+        history.find(
+            function(item) {
+
+                return item.id === id;
+
+            }
+        );
+
+
+    if (!selected) {
+
+        alert(
+            "Comic not found."
+        );
+
+        return;
+
+    }
+
+
+    /* =========================
+       SEND COMIC TO HOME PAGE
+    ========================= */
+
+    localStorage.setItem(
+
+        "comicCraftSelected",
+
+        JSON.stringify(
+            selected.comic
+        )
+
+    );
+
+
+    window.location.href =
+        "/";
+
+}
+
+
+
+/* =========================
+   DELETE ONE COMIC
+========================= */
+
+function deleteComic(id) {
+
+    let history = [];
+
+
+    try {
+
+        history =
+            JSON.parse(
+                localStorage.getItem(
+                    "comicCraftHistory"
+                )
+            ) || [];
+
+    }
+
+    catch (error) {
+
+        history = [];
+
+    }
+
+
+    history =
+        history.filter(
+            function(item) {
+
+                return item.id !== id;
+
+            }
+        );
+
+
+    localStorage.setItem(
+
+        "comicCraftHistory",
+
+        JSON.stringify(history)
+
+    );
+
+
+    loadHistory();
+
+}
+
+
+
+/* =========================
+   CLEAR ALL HISTORY
+========================= */
+
+function clearHistory() {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete all saved comics?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "comicCraftHistory"
+    );
+
+
+    localStorage.removeItem(
+        "comicCraftSelected"
+    );
+
+
+    loadHistory();
+
+}
+
+
+
+/* =========================
+   GO HOME
+========================= */
+
+function goHome() {
+
+    window.location.href =
+        "/";
+
+}
+
+
+
+/* =========================
+   SAFE HTML
+========================= */
+
+function safe(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =========================
+   START PAGE
+========================= */
+
+loadHistory();
+
+</script>
+
+
+</body>
+
+</html>

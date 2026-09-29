@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        ComicCraft - AI Comic Story Creator
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f6fb;
+
+            color: #222;
+
+            min-height: 100vh;
+        }
+
+
+        /* HEADER */
+
+        header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c5ce7,
+                    #8e44ad
+                );
+
+            color: white;
+
+            padding: 22px 7%;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.15);
+        }
+
+
+        .logo-area h1 {
+
+            font-size: 28px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .logo-area p {
+
+            font-size: 14px;
+
+            opacity: 0.9;
+        }
+
+
+        .history-btn {
+
+            border: none;
+
+            background: white;
+
+            color: #6c5ce7;
+
+            padding: 11px 18px;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .history-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 5px 12px
+                rgba(0,0,0,0.15);
+        }
+
+
+        /* MAIN */
+
+        main {
+
+            width: 90%;
+
+            max-width: 1000px;
+
+            margin: 35px auto;
+        }
+
+
+        /* INPUT */
+
+        .input-card {
+
+            background: white;
+
+            padding: 28px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+
+            margin-bottom: 25px;
+        }
+
+
+        .input-card h2 {
+
+            margin-bottom: 10px;
+
+            color: #333;
+        }
+
+
+        .input-card p {
+
+            color: #666;
+
+            margin-bottom: 18px;
+        }
+
+
+        textarea {
+
+            width: 100%;
+
+            min-height: 130px;
+
+            resize: vertical;
+
+            padding: 15px;
+
+            border: 2px solid #ddd;
+
+            border-radius: 12px;
+
+            font-size: 16px;
+
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+
+        textarea:focus {
+
+            border-color: #6c5ce7;
+        }
+
+
+        .generate-btn {
+
+            margin-top: 15px;
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c5ce7,
+                    #8e44ad
+                );
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .generate-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 6px 15px
+                rgba(108,92,231,0.3);
+        }
+
+
+        /* LOADING */
+
+        #loading {
+
+            display: none;
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            text-align: center;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.07);
+        }
+
+
+        .spinner {
+
+            width: 35px;
+
+            height: 35px;
+
+            border: 4px solid #ddd;
+
+            border-top:
+                4px solid #6c5ce7;
+
+            border-radius: 50%;
+
+            animation:
+                spin 1s linear infinite;
+
+            margin:
+                0 auto 12px;
+        }
+
+
+        @keyframes spin {
+
+            100% {
+
+                transform:
+                    rotate(360deg);
+            }
+        }
+
+
+        /* RESULT */
+
+        #result {
+
+            display: none;
+        }
+
+
+        .comic-card {
+
+            background: white;
+
+            padding: 28px;
+
+            border-radius: 18px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .comic-title {
+
+            font-size: 32px;
+
+            color: #6c5ce7;
+
+            margin-bottom: 8px;
+        }
+
+
+        .genre {
+
+            display: inline-block;
+
+            background: #eee8ff;
+
+            color: #6c5ce7;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            margin-bottom: 20px;
+        }
+
+
+        .section {
+
+            margin-top: 25px;
+        }
+
+
+        .section h3 {
+
+            color: #6c5ce7;
+
+            margin-bottom: 10px;
+
+            font-size: 21px;
+        }
+
+
+        .section p {
+
+            line-height: 1.7;
+
+            color: #444;
+        }
+
+
+        /* CHARACTERS */
+
+        .characters {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 15px;
+        }
+
+
+        .character {
+
+            background: #f7f5ff;
+
+            border-left:
+                5px solid #6c5ce7;
+
+            padding: 15px;
+
+            border-radius: 10px;
+        }
+
+
+        .character h4 {
+
+            color: #6c5ce7;
+
+            margin-bottom: 8px;
+        }
+
+
+        .character p {
+
+            font-size: 14px;
+
+            margin-bottom: 5px;
+        }
+
+
+        /* CHAPTER */
+
+        .chapter {
+
+            background: #fafafa;
+
+            border: 1px solid #eee;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            margin-top: 15px;
+        }
+
+
+        .chapter h4 {
+
+            color: #8e44ad;
+
+            margin-bottom: 12px;
+
+            font-size: 18px;
+        }
+
+
+        .chapter strong {
+
+            color: #555;
+        }
+
+
+        .chapter p {
+
+            margin-bottom: 10px;
+        }
+
+
+        /* ENDING */
+
+        .ending {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f3edff,
+                    #faf5ff
+                );
+
+            border-left:
+                5px solid #8e44ad;
+
+            padding: 20px;
+
+            border-radius: 12px;
+        }
+
+
+        /* TOOLS */
+
+        .tools-card {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .tools-card h3 {
+
+            margin-bottom: 18px;
+
+            color: #333;
+        }
+
+
+        .tools {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+        }
+
+
+        .tool-btn {
+
+            border: none;
+
+            padding: 12px 16px;
+
+            border-radius: 10px;
+
+            background: #f0edff;
+
+            color: #6c5ce7;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .tool-btn:hover {
+
+            background: #6c5ce7;
+
+            color: white;
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        /* MESSAGE */
+
+        #message {
+
+            display: none;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-weight: bold;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 650px) {
+
+            header {
+
+                padding:
+                    18px 5%;
+            }
+
+
+            .logo-area h1 {
+
+                font-size: 22px;
+            }
+
+
+            .logo-area p {
+
+                font-size: 12px;
+            }
+
+
+            .history-btn {
+
+                padding:
+                    9px 12px;
+
+                font-size: 13px;
+            }
+
+
+            main {
+
+                width: 94%;
+
+                margin-top: 20px;
+            }
+
+
+            .input-card,
+            .comic-card,
+            .tools-card {
+
+                padding: 20px;
+            }
+
+
+            .comic-title {
+
+                font-size: 26px;
+            }
+
+
+            .tools {
+
+                flex-direction: column;
+            }
+
+
+            .tool-btn {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo-area">
+
+        <h1>
+            🎨 ComicCraft
+        </h1>
+
+        <p>
+            AI Comic Story Creator powered by Gemini
+        </p>
+
+    </div>
+
+
+    <button
+        class="history-btn"
+        onclick="openHistory()">
+
+        📚 My Comics
+
+    </button>
+
+</header>
+
+
+<main>
+
+
+    <!-- INPUT -->
+
+    <div class="input-card">
+
+        <h2>
+            ✨ Create Your Comic
+        </h2>
+
+        <p>
+            Enter your comic idea and let Gemini
+            create a complete story.
+        </p>
+
+
+        <textarea
+            id="idea"
+            placeholder="Example: A college student discovers a mysterious robot in an abandoned laboratory..."
+        ></textarea>
+
+
+        <button
+            class="generate-btn"
+            onclick="generateComic()">
+
+            ✨ Generate Comic
+
+        </button>
+
+    </div>
+
+
+    <!-- MESSAGE -->
+
+    <div id="message"></div>
+
+
+    <!-- LOADING -->
+
+    <div id="loading">
+
+        <div class="spinner"></div>
+
+        <h3>
+            Creating your comic...
+        </h3>
+
+        <p>
+            Gemini is writing your story.
+            Please wait.
+        </p>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div id="result">
+
+
+        <!-- COMIC -->
+
+        <div class="comic-card">
+
+
+            <h1
+                id="comicTitle"
+                class="comic-title">
+            </h1>
+
+
+            <span
+                id="comicGenre"
+                class="genre">
+            </span>
+
+
+            <!-- CHARACTERS -->
+
+            <div class="section">
+
+                <h3>
+                    👥 Main Characters
+                </h3>
+
+
+                <div
+                    id="characters"
+                    class="characters">
+                </div>
+
+            </div>
+
+
+            <!-- SETTING -->
+
+            <div class="section">
+
+                <h3>
+                    🌍 Setting
+                </h3>
+
+
+                <p id="setting"></p>
+
+            </div>
+
+
+            <!-- CHAPTER 1 -->
+
+            <div class="section">
+
+                <h3>
+                    📖 Chapter 1
+                </h3>
+
+
+                <div class="chapter">
+
+                    <h4>
+                        🎬 Scene
+                    </h4>
+
+                    <p id="chapter1Scene"></p>
+
+
+                    <h4>
+                        ⚡ Actions
+                    </h4>
+
+                    <p id="chapter1Actions"></p>
+
+
+                    <h4>
+                        💬 Dialogue
+                    </h4>
+
+                    <p id="chapter1Dialogue"></p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CHAPTER 2 -->
+
+            <div class="section">
+
+                <h3>
+                    📖 Chapter 2
+                </h3>
+
+
+                <div class="chapter">
+
+                    <h4>
+                        🎬 Scene
+                    </h4>
+
+                    <p id="chapter2Scene"></p>
+
+
+                    <h4>
+                        ⚡ Actions
+                    </h4>
+
+                    <p id="chapter2Actions"></p>
+
+
+                    <h4>
+                        💬 Dialogue
+                    </h4>
+
+                    <p id="chapter2Dialogue"></p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CHAPTER 3 -->
+
+            <div class="section">
+
+                <h3>
+                    📖 Chapter 3
+                </h3>
+
+
+                <div class="chapter">
+
+                    <h4>
+                        🎬 Scene
+                    </h4>
+
+                    <p id="chapter3Scene"></p>
+
+
+                    <h4>
+                        ⚡ Actions
+                    </h4>
+
+                    <p id="chapter3Actions"></p>
+
+
+                    <h4>
+                        💬 Dialogue
+                    </h4>
+
+                    <p id="chapter3Dialogue"></p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ENDING -->
+
+            <div class="section">
+
+                <h3>
+                    🏁 Ending
+                </h3>
+
+
+                <div class="ending">
+
+                    <p id="ending"></p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- TOOLS -->
+
+        <div class="tools-card">
+
+            <h3>
+                🛠️ Comic Tools
+            </h3>
+
+
+            <div class="tools">
+
+
+                <button
+                    class="tool-btn"
+                    onclick="copyStory()">
+
+                    📋 Copy Story
+
+                </button>
+
+
+                <button
+                    class="tool-btn"
+                    onclick="saveStory()">
+
+                    💾 Save Story
+
+                </button>
+
+
+                <button
+                    class="tool-btn"
+                    onclick="downloadStory()">
+
+                    📥 Download Story
+
+                </button>
+
+
+                <button
+                    class="tool-btn"
+                    onclick="downloadPDF()">
+
+                    📄 Download PDF
+
+                </button>
+
+
+                <button
+                    class="tool-btn"
+                    onclick="newComic()">
+
+                    🔄 New Comic
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+<script>
+
+
+    // ==========================================
+    // CURRENT COMIC
+    // ==========================================
+
+    let currentComic = null;
+
+
+
+    // ==========================================
+    // GENERATE COMIC
+    // ==========================================
+
+    async function generateComic() {
+
+
+        const ideaInput =
+            document.getElementById("idea");
+
+
+        const idea =
+            ideaInput.value.trim();
+
+
+        if (!idea) {
+
+            showMessage(
+                "Please enter a comic idea first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        document.getElementById(
+            "loading"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "result"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "message"
+        ).style.display = "none";
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/generate",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                idea: idea
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                showMessage(
+                    data.message ||
+                    "Comic generation failed.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!data.comic) {
+
+                showMessage(
+                    "No comic story was returned.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            currentComic =
+                data.comic;
+
+
+            displayComic(
+                currentComic
+            );
+
+
+            showMessage(
+                "Comic story generated successfully!",
+                "success"
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                "Unable to connect to the server.",
+                "error"
+            );
+
+        }
+
+        finally {
+
+            document.getElementById(
+                "loading"
+            ).style.display = "none";
+
+        }
+
+    }
+
+
+
+    // ==========================================
+    // DISPLAY COMIC
+    // ==========================================
+
+    function displayComic(comic) {
+
+
+        document.getElementById(
+            "comicTitle"
+        ).textContent =
+            comic.title ||
+            "Untitled Comic";
+
+
+        document.getElementById(
+            "comicGenre"
+        ).textContent =
+            comic.genre ||
+            "Comic";
+
+
+        document.getElementById(
+            "setting"
+        ).textContent =
+            comic.setting ||
+            "No setting provided";
+
+
+        document.getElementById(
+            "ending"
+        ).textContent =
+            comic.ending ||
+            "No ending provided";
+
+
+        const charactersContainer =
+            document.getElementById(
+                "characters"
+            );
+
+
+        charactersContainer.innerHTML =
+            "";
+
+
+        if (
+            comic.characters &&
+            Array.isArray(
+                comic.characters
+            )
+        ) {
+
+
+            comic.characters.forEach(
+                character => {
+
+
+                    const characterDiv =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    characterDiv.className =
+                        "character";
+
+
+                    characterDiv.innerHTML = `
+
+                        <h4>
+                            ${safe(character.name)}
+                        </h4>
+
+                        <p>
+                            <strong>
+                                Personality:
+                            </strong>
+
+                            ${safe(
+                                character.personality
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Role:
+                            </strong>
+
+                            ${safe(
+                                character.role
+                            )}
+                        </p>
+
+                    `;
+
+
+                    charactersContainer.appendChild(
+                        characterDiv
+                    );
+
+                }
+            );
+
+        }
+
+
+        displayChapter(
+            comic.chapter1,
+            "chapter1Scene",
+            "chapter1Actions",
+            "chapter1Dialogue"
+        );
+
+
+        displayChapter(
+            comic.chapter2,
+            "chapter2Scene",
+            "chapter2Actions",
+            "chapter2Dialogue"
+        );
+
+
+        displayChapter(
+            comic.chapter3,
+            "chapter3Scene",
+            "chapter3Actions",
+            "chapter3Dialogue"
+        );
+
+
+        document.getElementById(
+            "result"
+        ).style.display = "block";
+
+
+        window.scrollTo({
+
+            top:
+                document.getElementById(
+                    "result"
+                ).offsetTop - 20,
+
+            behavior:
+                "smooth"
+
+        });
+
+    }
+
+
+
+    // ==========================================
+    // DISPLAY CHAPTER
+    // ==========================================
+
+    function displayChapter(
+        chapter,
+        sceneId,
+        actionsId,
+        dialogueId
+    ) {
+
+
+        if (!chapter) {
+
+            document.getElementById(
+                sceneId
+            ).textContent =
+                "No scene available.";
+
+
+            document.getElementById(
+                actionsId
+            ).textContent =
+                "No actions available.";
+
+
+            document.getElementById(
+                dialogueId
+            ).textContent =
+                "No dialogue available.";
+
+
+            return;
+        }
+
+
+        document.getElementById(
+            sceneId
+        ).textContent =
+            chapter.scene || "";
+
+
+        document.getElementById(
+            actionsId
+        ).textContent =
+            chapter.actions || "";
+
+
+        document.getElementById(
+            dialogueId
+        ).textContent =
+            chapter.dialogue || "";
+
+    }
+
+
+
+    // ==========================================
+    // SAVE STORY
+    // ==========================================
+
+    function saveStory() {
+
+
+        if (!currentComic) {
+
+            showMessage(
+                "There is no comic to save.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        let history =
+            JSON.parse(
+                localStorage.getItem(
+                    "comicCraftHistory"
+                )
+            ) || [];
+
+
+        const savedComic = {
+
+            id:
+                Date.now(),
+
+            savedAt:
+                new Date().toLocaleString(),
+
+            comic:
+                currentComic
+
+        };
+
+
+        history.unshift(
+            savedComic
+        );
+
+
+        localStorage.setItem(
+
+            "comicCraftHistory",
+
+            JSON.stringify(
+                history
+            )
+
+        );
+
+
+        showMessage(
+            "Comic saved successfully! 📚",
+            "success"
+        );
+
+    }
+
+
+
+    // ==========================================
+    // COPY STORY
+    // ==========================================
+
+    async function copyStory() {
+
+
+        if (!currentComic) {
+
+            showMessage(
+                "There is no comic to copy.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const text =
+            createStoryText(
+                currentComic
+            );
+
+
+        try {
+
+            await navigator.clipboard
+                .writeText(text);
+
+
+            showMessage(
+                "Comic story copied to clipboard! 📋",
+                "success"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                "Unable to copy the story.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+
+    // ==========================================
+    // DOWNLOAD TXT
+    // ==========================================
+
+    function downloadStory() {
+
+
+        if (!currentComic) {
+
+            showMessage(
+                "There is no comic to download.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const text =
+            createStoryText(
+                currentComic
+            );
+
+
+        const blob =
+            new Blob(
+
+                [text],
+
+                {
+                    type:
+                        "text/plain;charset=utf-8"
+                }
+
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            url;
+
+
+        const safeTitle =
+            (
+                currentComic.title ||
+                "ComicCraft Story"
+            )
+            .replace(
+                /[^a-z0-9]/gi,
+                "_"
+            );
+
+
+        link.download =
+            safeTitle + ".txt";
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        document.body.removeChild(
+            link
+        );
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+
+        showMessage(
+            "Comic story downloaded successfully! 📥",
+            "success"
+        );
+
+    }
+
+
+
+    // ==========================================
+    // DOWNLOAD PDF
+    // ==========================================
+
+    async function downloadPDF() {
+
+
+        if (!currentComic) {
+
+            showMessage(
+                "There is no comic to download.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        showMessage(
+            "Creating your PDF... 📄",
+            "success"
+        );
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/download-pdf",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                currentComic
+                            )
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                let errorData = null;
+
+
+                try {
+
+                    errorData =
+                        await response.json();
+
+                }
+
+                catch (e) {
+
+                    errorData = null;
+
+                }
+
+
+                throw new Error(
+
+                    errorData &&
+                    errorData.message
+
+                        ? errorData.message
+
+                        : "PDF creation failed."
+
+                );
+
+            }
+
+
+            const blob =
+                await response.blob();
+
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.href =
+                url;
+
+
+            const safeTitle =
+                (
+                    currentComic.title ||
+                    "ComicCraft_Story"
+                )
+                .replace(
+                    /[^a-z0-9]/gi,
+                    "_"
+                );
+
+
+            link.download =
+                safeTitle + ".pdf";
+
+
+            document.body.appendChild(
+                link
+            );
+
+
+            link.click();
+
+
+            document.body.removeChild(
+                link
+            );
+
+
+            URL.revokeObjectURL(
+                url
+            );
+
+
+            showMessage(
+                "PDF downloaded successfully! 📄",
+                "success"
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "PDF ERROR:",
+                error
+            );
+
+
+            showMessage(
+                error.message ||
+                "Unable to create PDF.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+
+    // ==========================================
+    // CREATE STORY TEXT
+    // ==========================================
+
+    function createStoryText(comic) {
+
+
+        let text = "";
+
+
+        text +=
+            "====================================\n";
+
+
+        text +=
+            "            COMICCRAFT\n";
+
+
+        text +=
+            "       AI COMIC STORY CREATOR\n";
+
+
+        text +=
+            "====================================\n\n";
+
+
+        text +=
+            "TITLE\n";
+
+
+        text +=
+            comic.title || "";
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "GENRE\n";
+
+
+        text +=
+            comic.genre || "";
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "MAIN CHARACTERS\n";
+
+
+        text +=
+            "------------------------------\n";
+
+
+        if (
+            comic.characters &&
+            Array.isArray(
+                comic.characters
+            )
+        ) {
+
+
+            comic.characters.forEach(
+                character => {
+
+
+                    text += "\n";
+
+
+                    text +=
+                        "Name: " +
+                        (
+                            character.name ||
+                            ""
+                        ) +
+                        "\n";
+
+
+                    text +=
+                        "Personality: " +
+                        (
+                            character.personality ||
+                            ""
+                        ) +
+                        "\n";
+
+
+                    text +=
+                        "Role: " +
+                        (
+                            character.role ||
+                            ""
+                        ) +
+                        "\n";
+
+                }
+            );
+
+        }
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "SETTING\n";
+
+
+        text +=
+            "------------------------------\n";
+
+
+        text +=
+            comic.setting || "";
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "CHAPTER 1\n";
+
+
+        text +=
+            "------------------------------\n";
+
+
+        if (comic.chapter1) {
+
+
+            text +=
+                "\nScene:\n";
+
+
+            text +=
+                comic.chapter1.scene ||
+                "";
+
+
+            text +=
+                "\n\nActions:\n";
+
+
+            text +=
+                comic.chapter1.actions ||
+                "";
+
+
+            text +=
+                "\n\nDialogue:\n";
+
+
+            text +=
+                comic.chapter1.dialogue ||
+                "";
+
+        }
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "CHAPTER 2\n";
+
+
+        text +=
+            "------------------------------\n";
+
+
+        if (comic.chapter2) {
+
+
+            text +=
+                "\nScene:\n";
+
+
+            text +=
+                comic.chapter2.scene ||
+                "";
+
+
+            text +=
+                "\n\nActions:\n";
+
+
+            text +=
+                comic.chapter2.actions ||
+                "";
+
+
+            text +=
+                "\n\nDialogue:\n";
+
+
+            text +=
+                comic.chapter2.dialogue ||
+                "";
+
+        }
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "CHAPTER 3\n";
+
+
+        text +=
+            "------------------------------\n";
+
+
+        if (comic.chapter3) {
+
+
+            text +=
+                "\nScene:\n";
+
+
+            text +=
+                comic.chapter3.scene ||
+                "";
+
+
+            text +=
+                "\n\nActions:\n";
+
+
+            text +=
+                comic.chapter3.actions ||
+                "";
+
+
+            text +=
+                "\n\nDialogue:\n";
+
+
+            text +=
+                comic.chapter3.dialogue ||
+                "";
+
+        }
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "ENDING\n";
+
+
+        text +=
+            "------------------------------\n";
+
+
+        text +=
+            comic.ending || "";
+
+
+        text +=
+            "\n\n";
+
+
+        text +=
+            "====================================\n";
+
+
+        text +=
+            "Created with ComicCraft\n";
+
+
+        text +=
+            "====================================\n";
+
+
+        return text;
+
+    }
+
+
+
+    // ==========================================
+    // NEW COMIC
+    // ==========================================
+
+    function newComic() {
+
+
+        currentComic = null;
+
+
+        document.getElementById(
+            "idea"
+        ).value = "";
+
+
+        document.getElementById(
+            "result"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "message"
+        ).style.display =
+            "none";
+
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior:
+                "smooth"
+
+        });
+
+    }
+
+
+
+    // ==========================================
+    // OPEN HISTORY
+    // ==========================================
+
+    function openHistory() {
+
+        window.location.href =
+            "/history";
+
+    }
+
+
+
+    // ==========================================
+    // MESSAGE
+    // ==========================================
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        message.textContent =
+            text;
+
+
+        message.style.display =
+            "block";
+
+
+        if (type === "success") {
+
+
+            message.style.background =
+                "#e8f8ee";
+
+
+            message.style.color =
+                "#187a3d";
+
+
+        }
+
+        else {
+
+
+            message.style.background =
+                "#ffeaea";
+
+
+            message.style.color =
+                "#b42318";
+
+        }
+
+    }
+
+
+
+    // ==========================================
+    // SAFE TEXT
+    // ==========================================
+
+    function safe(value) {
+
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return "";
+
+        }
+
+
+        return String(value)
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+
+    // ==========================================
+    // LOAD SAVED COMIC
+    // ==========================================
+
+    document.addEventListener(
+
+        "DOMContentLoaded",
+
+        function () {
+
+
+            const selected =
+                localStorage.getItem(
+                    "comicCraftSelected"
+                );
+
+
+            if (!selected) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const comic =
+                    JSON.parse(
+                        selected
+                    );
+
+
+                currentComic =
+                    comic;
+
+
+                displayComic(
+                    comic
+                );
+
+
+                localStorage.removeItem(
+                    "comicCraftSelected"
+                );
+
+
+            }
+
+            catch (error) {
+
+
+                console.error(
+                    "Unable to load saved comic:",
+                    error
+                );
+
+            }
+
+        }
+
+    );
+
+</script>
+
+
+</body>
+
+</html>

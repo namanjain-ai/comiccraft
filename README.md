@@ -70,13 +70,12 @@ http://127.0.0.1:8000
 
 ## 👥 Team
 
-**Government Arts and Science College, Thondamuthur**
-**Department of Computer Science**
-**Academic Year: 2026–2027**
-
-* Kritesh R P
-* Ranjith E
-* Muthu C
+AM JAIN COLLEGE MEENAMBAKAM 
+1.SRIDHAR
+2.NAMAN
+3.BALAGURU
+4.PRAVEENRAM
+5.AKILESHRAM
 
 ## 📌 Project Status
 
